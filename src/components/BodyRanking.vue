@@ -80,6 +80,7 @@
         topCode: {},
         topCtf: {},
         topFinal: {},
+        loop: null,
       }
     },
     computed: {
@@ -94,32 +95,64 @@
       }
     },
     async mounted () {
-      this.fetchData()
+       this.loop = setInterval(async () => {
+          await this.fetchData();
+        }, 10000);
+    },
+
+    beforeDestroy() {
+        clearInterval(this.loop);
     },
 
     methods: {
       _get,
-      async fetchData () {
+      async fetchDataCode () {
         try {
           this.loading = true;
           const { data: dataCode } = await fetch(
             `${codeHost}/api/public/contests/${codeContest}/leaderboard`
           ).then((response) => response.json())
-          const { data: dataCtf } = await fetch(
+          this.dataCodeRaw = dataCode ? dataCode : [];
+        } catch (e) {
+          this.dataCodeRaw = [];
+        } finally {
+          this.loading = false;
+        }
+      },
+
+      async fetchDataCtf () {
+        try {
+          this.loading = true;
+            const { data: dataCtf } = await fetch(
             `${ctfHost}/api/public/contests/${ctfContest}/leaderboard`
           ).then((response) => response.json())
 
-          this.dataCodeRaw = dataCode;
           this.dataCtfRaw = dataCtf;
+        } catch (e) {
+          this.dataCtfRaw = [];
+        } finally {
+          this.loading = false;
+        }
+      },
 
-          let arrayCtfName = dataCtf.length > 0 ? dataCtf.map(item => item.name) : [];
-          let arrayCodeName = dataCode.length > 0 ? dataCode.map(item => item.name) : [];
+      async fetchData () {
+        this.loading = true;
+        await this.fetchDataCode()
+        await this.fetchDataCtf()
+      
+        this.calculateScore()
+        this.loading = false;
+      },
+
+      calculateScore () {
+          let arrayCtfName = this.dataCtfRaw.length > 0 ? this.dataCtfRaw.map(item => item.name) : [];
+          let arrayCodeName = this.dataCodeRaw.length > 0 ? this.dataCodeRaw.map(item => item.name) : [];
           let teamsName =  arrayCtfName.concat(arrayCodeName.filter((item) => arrayCtfName.indexOf(item) < 0));
 
 
           let rankings = teamsName.map(item => {
-            let matchCode = _get(_filter(dataCode, i => i.name.toLowerCase() === item.toLowerCase()), '0')
-            let matchCtf = _get( _filter(dataCtf, i => i.name.toLowerCase() === item.toLowerCase()), '0')
+            let matchCode = _get(_filter(this.dataCodeRaw, i => i.name.toLowerCase() === item.toLowerCase()), '0')
+            let matchCtf = _get( _filter(this.dataCtfRaw, i => i.name.toLowerCase() === item.toLowerCase()), '0')
          
             return {
               name: item,
@@ -131,12 +164,6 @@
           rankings = this.sortScore(rankings)
 
           this.rankings = this.assignRank(this.sortScore(rankings));        
-
-          this.loading = false;
-        } catch (e) {
-          this.rankings = [];
-          this.loading = false;
-        }
       },
       sortScore(array, key = "total_score") {
         return _orderBy(array, [key], ['desc']);
@@ -161,6 +188,10 @@
 .body-rankings {
   background-image: url('../assets/images/background-body.png');
   background-size: 100%;
+}
+
+.rankings {
+  min-height: 70vh;
 }
 @media (max-width: 640px) {
   .ranking-table-cover {

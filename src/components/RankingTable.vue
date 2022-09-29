@@ -31,15 +31,15 @@
     </table>
   </div>
 
-  <div v-if="!loading && !error && rankings.length < 1" class="flex text-center items-center justify-center mt-10 text-lg">
+  <div v-if="!loading && !error && rankings.length < 1" class="flex text-center items-center justify-center mt-32 text-lg">
     <img width="40" src="@/assets/images/icons/sad.svg" class="mr-5">
     Chưa có dữ liệu
   </div>
-  <div v-if="!loading && error" class="flex text-center text-red-300 items-center justify-center mt-10 text-lg">
+  <div v-if="!loading && error" class="flex text-center text-red-300 items-center justify-center mt-32 text-lg">
     <img width="40" src="@/assets/images/icons/sad.svg" class="mr-5">
     Có lỗi xảy ra khi tải dữ liệu !
   </div>
-  <div v-if="loading" class="w-full">
+  <div v-if="loading" class="w-full mt-32">
     <img src="@/assets/images/icons/ring-loading.svg" class="mx-auto m-0" />
   </div>
 </template>

@@ -1,6 +1,6 @@
 
 <template>
-  <div class="banner pt-3 bg-cover relative text-black bg-yellow-100 w-100">
+  <div id="home" class="banner pt-3 bg-cover relative text-black bg-yellow-100 w-100">
     <img class="float-x absolute bottom-0 w-100" src="@/assets/images/header-man.png" />
 
     <div class="container text-white p-10">

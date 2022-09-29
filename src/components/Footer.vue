@@ -4,7 +4,7 @@
   <div class="footer-rankings pt-3 relative text-black bg-yellow-100 w-100">
     <div class="sm:container text-white p-10">
       <div class="footer mt-3">
-          <div class="font-opens xl:w-3/5 mx-auto md:grid md:grid-cols-2 gap-0">
+          <div class="font-opens xxl:w-3/5 mx-auto md:grid md:grid-cols-2 gap-0">
             <div class="md:border-r-2  border-gray-500 md:pr-16">
               <b  class="text-lg ">
                 Đơn vị tổ chức

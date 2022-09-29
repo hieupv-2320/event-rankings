@@ -35,18 +35,116 @@
         <div class="font-svn text-5xl lg:text-8xl relative text-center rankings-header pb-16">
           <img src="@/assets/images/cup.png" class="w-1/5 lg:w-1/4 mx-auto mb-10 sm:hidden bottom-0 left-0" />
           bảng xếp hạng
-          <img src="@/assets/images/cup.png" class="w-1/5 lg:w-1/4 float-x mx-auto absolute hidden sm:block bottom-0 left-0" />
+          <img src="@/assets/images/cup.png" class="w-1/5 lg:w-1/4 float-x mx-auto absolute hidden sm:block bottom-0 -left-20 xxl:left-0" />
         </div> 
         <div class="mx-auto ranking-table-cover mt-4">
-          <RankingTable />
+          <RankingTable 
+            :rankings="rankings"
+            :loading="loading"
+            :error="error"
+          />
         </div>
       </div>
     </div> 
   </div>
 </template>
 
-<script setup>
-  import RankingTable from './RankingTable.vue'
+<script>
+  import RankingTable from './RankingTable.vue';
+  const codeHost = import.meta.env.VITE_CODE_HOST
+  const ctfHost = import.meta.env.VITE_CTF_HOST
+  const codeContest = import.meta.env.VITE_CONTEST_CODE_HASHID
+  const ctfContest = import.meta.env.VITE_CONTEST_CTF_HASHID
+
+  export default {
+    components: {
+      RankingTable,
+    },
+    data() {
+      return {
+        rankings: [],
+        loading: false,
+        error: false
+      }
+    },
+
+    async mounted () {
+      this.fetchData()
+    },
+
+    methods: {
+      async fetchData () {
+        try {
+          this.loading = true;
+          const { data: dataCode } = await fetch(
+            `${codeHost}/api/public/contests/${codeContest}/leaderboard`
+          ).then((response) => response.json())
+
+          const { data: dataCtf } = await fetch(
+            `${ctfHost}/api/public/contests/${ctfContest}/leaderboard`
+          ).then((response) => response.json())
+
+          if(dataCtf.length >= dataCode.length) {
+            let rankings = dataCtf.map(item => {
+              let found = dataCode.find(code => code.name.toLowerCase() && code.name.toLowerCase() === item.name.toLowerCase());
+              let codeScore = found ? found.score : 0;
+
+              return {
+                team_id: item.team_id,
+                name: item.name,
+                score_ctf: item.score,
+                score_code: codeScore,
+                total_score: this.sumScore(item.score, codeScore)
+              };
+            });
+
+            rankings = this.sortScore(rankings)
+
+            this.rankings = this.assignRank(this.sortScore(rankings));
+          } else {
+            let rankings = dataCode.map(item => {
+              let found = dataCtf.find(ctf => ctf.name.toLowerCase() && ctf.name.toLowerCase() === item.name.toLowerCase());
+              let ctfScore = found ? found.score : 0;
+
+              return {
+                team_id: item.team_id,
+                name: item.name,
+                score_ctf: ctfScore,
+                score_code: item.score,
+                total_score: this.sumScore(item.score, ctfScore)
+              };
+            });
+            this.rankings = this.assignRank(this.sortScore(rankings));
+          }
+
+          this.loading = false;
+        } catch (e) {
+          this.error = true;
+          this.loading = false;
+        }
+      },
+      sortScore(array) {
+        return array.sort(function(a, b) {
+          if (a.score < b.score) return -1;
+          if (a.score > b.score) return 1;
+          return 0;
+        });
+      },
+
+      assignRank(array) {
+        return array.map((item, index) => {
+          return {
+            rank: index + 1,
+            ...item,
+          }
+        });
+      },
+      sumScore(scoreCode, scoreCtf)
+      {
+        return parseInt(scoreCode, 10) + parseInt(scoreCtf, 10);
+      },
+    }
+  }
 </script>
 <style scoped>
 .body-rankings {

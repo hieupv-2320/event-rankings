@@ -1,73 +1,55 @@
 <template>
-  <table class="rank-table mx-auto"> 
-    <thead>
-      <tr class="bg-primary text-bluedark">
-        <th class="border border-slate-300">STT</th>
-        <th class="border border-slate-300">Tên đội</th>
-        <th class="border border-slate-300">Viblo Code</th>
-        <th class="border border-slate-300">Viblo CTF</th>
-        <th class="border border-slate-300">Tổng điểm</th>
-      </tr>
-    </thead>
-    <tbody>
-      
-      <tr v-for="(item, index) in rankings" :key="index" class="bg-primary-dark"> 
-        <td class="border border-slate-300">
-          <img v-if="index+1 <= 5" :src="`/images/medals/${index+1}.png`" width="50" />
-          <span v-else > {{ index + 1 }} </span>
-        </td>
-        <td class="border border-slate-300 padding-h-4">{{ item.name }}</td>
-        <td class="border border-slate-300 padding-h-4">{{ item.score_code }}</td>
-        <td class="border border-slate-300 padding-h-4">{{ item.score_ctf }}</td>
-        <td class="border border-slate-300 padding-h-4">{{ sumScore(item.score_code, item.score_ctf) }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <div class="mb-10">
+      <img width="30" title="Tải lại" src="@/assets/images/icons/refresh.svg" @click="fetchData" class="transition hover:scale-110 cursor-pointer" />
+    </div>
+    <table v-if="!loading && !error && rankings.length > 0" class="rank-table mx-auto"> 
+      <thead>
+        <tr class="bg-primary text-bluedark">
+          <th class="border border-slate-300">STT</th>
+          <th class="border border-slate-300">Tên đội</th>
+          <th class="border border-slate-300">Viblo Code</th>
+          <th class="border border-slate-300">Viblo CTF</th>
+          <th class="border border-slate-300">Tổng điểm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in rankings" :key="index" class="bg-primary-dark"> 
+          <td class="border border-slate-300">
+            <img v-if="item.rank <= 5" :src="`/images/medals/${item.rank}.png`" width="50" />
+            <span v-else > {{ item.rank }} </span>
+          </td>
+          <td class="border border-slate-300 padding-h-4">{{ item.name }}</td>
+          <td class="border border-slate-300 padding-h-4">{{ item.score_code }}</td>
+          <td class="border border-slate-300 padding-h-4">{{ item.score_ctf }}</td>
+          <td class="border border-slate-300 padding-h-4">{{ item.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div v-if="!loading && !error && rankings.length < 1" class="flex text-center items-center justify-center mt-10 text-lg">
+    <img width="40" src="@/assets/images/icons/sad.svg" class="mr-5">
+    Chưa có dữ liệu
+  </div>
+  <div v-if="!loading && error" class="flex text-center text-red-300 items-center justify-center mt-10 text-lg">
+    <img width="40" src="@/assets/images/icons/sad.svg" class="mr-5">
+    Có lỗi xảy ra khi tải dữ liệu !
+  </div>
+  <div v-if="loading" class="w-full">
+    <img src="@/assets/images/icons/ring-loading.svg" class="mx-auto m-0" />
+  </div>
 </template>
 
 <script>
   export default {
-    data() {
-      return {
-        rankings: [
-          {
-            name: 'Team 1',
-            score_code: 8000,
-            score_ctf: 7000,
-          },
-          {
-            name: 'Team 2',
-            score_code: 8000,
-            score_ctf: 7000,
-          },
-          {
-            name: 'Team 3',
-            score_code: 8000,
-            score_ctf: 7000,
-          },
-          {
-            name: 'Team 44',
-            score_code: 8000,
-            score_ctf: 7000,
-          },
-          {
-            name: 'Team 5555',
-            score_code: 8000,
-            score_ctf: 7000,
-          },
-          {
-            name: 'Team 5555',
-            score_code: 8000,
-            score_ctf: 7000,
-          }
-        ],
-      }
-    },
-    methods: {
-      sumScore(scoreCode, scoreCtf)
-      {
-        return parseInt(scoreCode, 10) + parseInt(scoreCtf, 10);
-      },
+    props: {
+      rankings: {
+            type: Array,
+            required: true,
+        },
+      loading: Boolean,
+      error: Boolean
     }
   }
 </script>

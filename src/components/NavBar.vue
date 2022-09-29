@@ -2,7 +2,7 @@
 <template>
   <div class="nav-bar sticky top-0 text-black w-100">
     <div @click="show" class="container text-bold font-open-sans text-white nav-bar-content h-100 mx-auto flex justify-between items-center"> 
-      <img src="@/assets/images/Logo.png" class="w-3/4 sm:w-fit"/> 
+      <img @click.prevent="scrollToSection('home')" src="@/assets/images/Logo.png" class="w-3/4 cursor-pointer sm:w-fit"/> 
       <div class="hidden lg:block menu text-sm xxl:text-lg font-bold">
         <a href="https://s2k.cmcglobal.com.vn/ctf" target="_blank" class="mr-10 font-bold">
           Cách thức thi đấu

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="mb-10">
-      <img width="30" title="Tải lại" src="@/assets/images/icons/refresh.svg" @click="fetchData" class="transition hover:scale-110 cursor-pointer" />
-    </div>
     <table v-if="!loading && !error && rankings.length > 0" class="rank-table mx-auto"> 
       <thead>
         <tr class="bg-primary text-bluedark">
@@ -20,9 +17,15 @@
             <span v-else > {{ item.rank }} </span>
           </td>
           <td class="border border-slate-300 padding-h-4">{{ item.name }}</td>
-          <td class="border border-slate-300 padding-h-4">{{ item.score_code }}</td>
-          <td class="border border-slate-300 padding-h-4">{{ item.score_ctf }}</td>
-          <td class="border border-slate-300 padding-h-4">{{ item.score }}</td>
+          <td :class="`border border-slate-300 padding-h-4 ${highLightTop('code', item.name)}`">
+            {{ item.score_code }}
+          </td>
+          <td :class="`border border-slate-300 padding-h-4 ${highLightTop('ctf', item.name)}`">
+            {{ item.score_ctf }}
+          </td>
+          <td :class="`border border-slate-300 padding-h-4 ${highLightTop('final', item.name)}`">
+            {{ item.total_score }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -42,6 +45,7 @@
 </template>
 
 <script>
+  import _get from 'lodash/get'
   export default {
     props: {
       rankings: {
@@ -49,7 +53,30 @@
             required: true,
         },
       loading: Boolean,
-      error: Boolean
+      error: Boolean,
+      topCode: Object,
+      topFinal: Object,
+      topCtf: Object,
+    },
+    methods: {
+      _get,
+      highLightTop(type, name) {
+        const nameTopCode = _get(this.topCode, 'name', '');
+        const nametopCtf= _get(this.topCtf, 'name', '');
+        const nametopFinal = _get(this.topFinal, 'name', '');
+
+        switch (type) {
+          case 'code':
+            return nameTopCode.toLowerCase() === name.toLowerCase() 
+              ? 'text-primary' : '';
+          case 'ctf':
+            return nametopCtf.toLowerCase() === name.toLowerCase() 
+              ? 'text-primary' : '';
+          default: 
+            return nametopFinal.toLowerCase() === name.toLowerCase() 
+                ? 'text-primary' : '';
+        }
+      }  
     }
   }
 </script>

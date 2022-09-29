@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/event-rankings/',
   plugins: [vue()],
   resolve: {
     alias: {

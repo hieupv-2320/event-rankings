@@ -14,7 +14,7 @@
               </a>
               <p class="text-justify text-lg leading-7 text-gray-300">
                 CMC Global, thành viên của Tập đoàn Công nghệ CMC, tự hào thuộc TOP 2 công ty IT Outsourcing tại Việt Nam, với khát vọng đem những sản phẩm, giải pháp và dịch vụ CNTT Việt Nam ra thị trường quốc tế.
-                Thông tin cuộc thi, vui lòng liên hệ: dtanh8@cmcglobal.vn
+                Thông tin cuộc thi, vui lòng liên hệ:
                 <span class="text-primary"> dtanh8@cmcglobal.vn </span>
               </p>
               <div class="flex mt-5">

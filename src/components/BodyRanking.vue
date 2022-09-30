@@ -45,8 +45,14 @@
             :rankings="rankings"
             :loading="loading"
             :error="error"
+            :sort-code="sortCode"
+            :sort-ctf="sortCtf"
             :top-code="topCode"
+            :sort-by-code="sortCodeby"
             :top-ctf="topCtf"
+            :sort-by-ctf="sortCTFby"
+            :sort-by-final="sortFinalby"
+            :sort-final="sortFinal"
             :top-final="topFinal"
           />
         </div>
@@ -81,6 +87,9 @@
         topCtf: {},
         topFinal: {},
         loop: null,
+        sortCodeby: 'desc',
+        sortCTFby: 'desc',
+        sortFinalby: 'desc',
       }
     },
     computed: {
@@ -92,7 +101,7 @@
       },
       topFinal () {
         return _get(_orderBy(this.rankings, ['total_score'], ['desc']), '0');
-      }
+      },
     },
     async mounted () {
        this.loop = setInterval(async () => {
@@ -106,10 +115,38 @@
 
     methods: {
       _get,
+
+      sortCode (by) {
+        if (this.rankings.length > 0) {
+          this.rankings = _orderBy(this.rankings, ['score_code'], [by]);
+          this.sortCodeby = by;
+          this.sortCTFby = 'desc';
+          this.sortFinalby = 'desc';
+        }
+      },
+
+      sortCtf(by) {
+        if (this.rankings.length > 0) {
+          this.rankings = _orderBy(this.rankings, ['score_ctf'], [by]);
+          this.sortCodeby = 'desc';
+          this.sortCTFby = by;
+          this.sortFinalby = 'desc';
+        } 
+      },
+
+      sortFinal(by) {
+        if (this.rankings.length > 0) {
+          this.rankings = _orderBy(this.rankings, ['total_score'], [by]);
+          this.sortCodeby = 'desc';
+          this.sortCTFby = 'desc';
+          this.sortFinalby = by;
+        } 
+      },
+
       async fetchDataCode () {
         try {
           this.loading = true;
-          const { data: dataCode } = await fetch(
+          const { data: dataCode }  = await fetch(
             `${codeHost}/api/public/contests/${codeContest}/leaderboard`
           ).then((response) => response.json())
           this.dataCodeRaw = dataCode ? dataCode : [];
@@ -127,9 +164,13 @@
             `${ctfHost}/api/public/contests/${ctfContest}/leaderboard`
           ).then((response) => response.json())
 
-          this.dataCtfRaw = dataCtf;
+          this.dataCtfRaw = dataCtf ? dataCtf.map(i => ({
+              team_hash_id: i.team_hash_id,
+              name: i.team_name,
+              score: i.score
+            })) :  [];
         } catch (e) {
-          this.dataCtfRaw = [];
+          this.dataCtfRaw = []
         } finally {
           this.loading = false;
         }

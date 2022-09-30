@@ -5,9 +5,27 @@
         <tr class="bg-primary text-bluedark">
           <th class="border border-slate-300">STT</th>
           <th class="border border-slate-300">Tên đội</th>
-          <th class="border border-slate-300">Viblo Code</th>
-          <th class="border border-slate-300">Viblo CTF</th>
-          <th class="border border-slate-300">Tổng điểm</th>
+          <th class="border border-slate-300">
+              <span class="flex justify-center items-center">
+                <b> Viblo Code </b>
+                <img v-if="sortByCode === 'asc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-up.svg" @click="sortCode('desc')"  width="20" />
+                <img v-if="sortByCode === 'desc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-down.svg" @click="sortCode('asc')"  width="20" />
+              </span> 
+          </th>
+          <th class="border border-slate-300">
+              <span class="flex justify-center items-center">
+                <b> Viblo CTF </b>
+                <img v-if="sortByCtf === 'asc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-up.svg" @click="sortCtf('desc')"  width="20" />
+                <img v-if="sortByCtf === 'desc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-down.svg" @click="sortCtf('asc')"  width="20" />
+              </span> 
+          </th>
+          <th class="border border-slate-300">
+              <span class="flex justify-center items-center">
+                <b> Tổng điểm </b>
+                <img v-if="sortByFinal === 'asc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-up.svg" @click="sortFinal('desc')"  width="20" />
+                <img v-if="sortByFinal === 'desc'" class="ml-3 cursor-pointer" src="@/assets/images/icons/arrow-down.svg" @click="sortFinal('asc')"  width="20" />
+              </span> 
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -57,6 +75,12 @@
       topCode: Object,
       topFinal: Object,
       topCtf: Object,
+      sortCode: Function,
+      sortCtf: Function,
+      sortFinal: Function,
+      sortByCode: String,
+      sortByCtf: String,
+      sortByFinal: String,
     },
     methods: {
       _get,
